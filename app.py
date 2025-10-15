@@ -60,34 +60,59 @@ def index():
     try:
         conn = get_connection()
         cursor = conn.cursor()
+
         category_filter = request.args.get('category', None)
 
-        # Явно указываем колонки — чтобы индексы были предсказуемы
+        # Явно указываем колонки — чтобы порядок был предсказуем
         if category_filter:
-            cursor.execute('SELECT id, task, completed, category, created_at FROM tasks WHERE category = %s ORDER BY task ASC', (category_filter,))
+            cursor.execute(
+                'SELECT id, task, completed, category, created_at FROM tasks WHERE category = %s ORDER BY task ASC',
+                (category_filter,)
+            )
         else:
-            cursor.execute('SELECT id, task, completed, category, created_at FROM tasks ORDER BY task ASC')
+            cursor.execute(
+                'SELECT id, task, completed, category, created_at FROM tasks ORDER BY task ASC'
+            )
 
         rows = cursor.fetchall()
+
+        # Преобразуем строки в список словарей
         tasks = []
         for row in rows:
-            # row: (id, task, completed, category, created_at)
             tasks.append({
                 'id': row[0],
                 'text': row[1],
-                'completed': row[2],
+                'completed': bool(row[2]),
                 'category': row[3],
-                'created_at': row[4] if len(row) > 4 else None
+                'created_at': row[4].strftime('%Y-%m-%d %H:%M') if (len(row) > 4 and row[4]) else None
             })
+
+        # Собираем уникальные категории из базы
+        cursor.execute('SELECT DISTINCT category FROM tasks')
+        cat_rows = cursor.fetchall()
+        cats = []
+        for r in cat_rows:
+            if r and r[0]:
+                v = r[0].strip()
+                if v and v not in cats:
+                    cats.append(v)
+
+        # Добавим стандартные категории (если их ещё нет) — они окажутся в конце
+        default_cats = ['Work', 'Study', 'Personal', 'Other']
+        for dc in default_cats:
+            if dc not in cats:
+                cats.append(dc)
 
         cursor.close()
         conn.close()
-        return render_template('index.html', tasks=tasks, selected_category=category_filter)
+
+        return render_template('index.html', tasks=tasks, selected_category=category_filter, categories=cats)
 
     except Error as e:
         print("Feil ved henting av oppgaver:", e)
         flash("Kunne ikke koble til databasen.", "error")
-        return render_template('index.html', tasks=[], selected_category=None)
+        # вернуть пустую страницу с дефолтными категориями
+        return render_template('index.html', tasks=[], selected_category=None, categories=['Work','Study','Personal','Other'])
 
 @app.route('/add', methods=['POST'])
 def add_task():
@@ -169,16 +194,18 @@ def edit_task(task_id):
             if row is None:
                 flash("Oppgave ikke funnet.", "warning")
                 return redirect(url_for('index'))
+            # Возвращаем словарь с ключом 'text' — чтобы шаблоны использовали task.text
             task_obj = {
                 'id': row[0],
-                'task': row[1],
-                'completed': row[2],
+                'text': row[1],
+                'completed': bool(row[2]),
                 'category': row[3]
             }
             return render_template('edit.html', task=task_obj)
 
         # POST
         new_text = request.form.get('task', '').strip()
+        new_category = request.form.get('category', None)
         if not new_text:
             flash("Oppgave kan ikke være tom.", "warning")
             return redirect(url_for('edit_task', task_id=task_id))
@@ -186,7 +213,7 @@ def edit_task(task_id):
             flash("Oppgave for lang (max 255 tegn).", "warning")
             return redirect(url_for('edit_task', task_id=task_id))
 
-        cursor.execute('UPDATE tasks SET task=%s WHERE id=%s', (new_text, task_id))
+        cursor.execute('UPDATE tasks SET task=%s, category=%s WHERE id=%s', (new_text, new_category, task_id))
         conn.commit()
         cursor.close()
         conn.close()

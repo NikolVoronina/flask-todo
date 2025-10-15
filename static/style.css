@@ -1,152 +1,146 @@
+/* Базовые стили */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, #e0f7fa, #b2ebf2);
-    margin: 0;
-    padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f2fbff 0%, #e9f7f7 100%);
+  margin: 0;
+  padding: 20px;
+  color: #222;
 }
-
 
 .container {
-    max-width: 500px;
-    margin: 50px auto;
-    background-color: #ffffff;
-    padding: 30px 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-h1 {
-    text-align: center;
-    color: #00796b;
-    margin-bottom: 25px;
-    font-size: 2rem;
+/* Header / form */
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-
-form {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.add-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-input[type="text"] {
-    flex: 1;
-    padding: 12px 15px;
-    border-radius: 15px;
-    border: 1px solid #00796b;
-    font-size: 16px;
-    transition: 0.3s;
+.add-form input[type="text"] {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cfecec;
+  background: #fff;
 }
 
-input[type="text"]:focus {
-    outline: none;
-    border-color: #004d40;
-    box-shadow: 0 0 8px rgba(0,77,64,0.5);
+.add-form select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #cfecec;
+  background: #fff;
 }
 
-button {
-    padding: 12px 20px;
-    margin-left: 10px;
-    background-color: #00796b;
-    color: white;
-    border: none;
-    border-radius: 15px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
+button.primary {
+  background: #0b7d7a;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
 }
 
-button:hover {
-    background-color: #004d40;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+button.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(11,125,122,.12); }
+
+/* Grid for categories */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
 }
 
-
-ul {
-    list-style-type: none;
-    padding: 0;
+/* Each category column */
+.category-col {
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
-li {
-    background-color: #b2dfdb;
-    margin-bottom: 12px;
-    padding: 15px 20px;
-    border-radius: 15px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    font-size: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.3s;
+.category-col h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  color: #0b7d7a;
 }
 
-li:hover {
-    background-color: #80cbc4;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+/* Cards list */
+.cards { display:flex; flex-direction:column; gap:10px; }
+
+.task-card {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  border-radius:10px;
+  background: linear-gradient(180deg, #ffffff, #f7fbfb);
+  border: 1px solid #edf7f7;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.task-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(3,60,60,0.06); }
+
+.task-left { display:flex; gap:10px; align-items:center; min-width:0; }
+.task-text .title { font-weight:600; }
+.task-text .meta { font-size:0.8rem; color:#666; margin-top:4px; }
+
+/* Done state */
+.task-card.done { opacity: 0.7; background: linear-gradient(180deg,#f3f7f6,#eef6f5); text-decoration: line-through; }
+
+/* Right side: category badge + actions */
+.category-badge {
+  background: #e7f7f6;
+  color: #0b7d7a;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size:0.85rem;
+  margin-right:8px;
 }
 
-/* Сообщение при пустом списке */
-p {
-    text-align: center;
-    color: #555;
-    font-style: italic;
-    font-size: 1.1rem;
+.actions { display:flex; gap:8px; align-items:center; }
+
+/* Buttons */
+.edit-btn {
+  background: transparent;
+  border: 1px solid #cfecec;
+  color: #0b7d7a;
+  padding: 6px 8px;
+  border-radius: 8px;
+  text-decoration:none;
 }
-
-/* Адаптивность */
-@media (max-width: 600px) {
-    .container {
-        margin: 30px 15px;
-        padding: 20px;
-    }
-
-    form {
-        flex-direction: column;
-    }
-
-    input[type="text"] {
-        margin-bottom: 10px;
-        width: 100%;
-    }
-
-    button {
-        width: 100%;
-        margin-left: 0;
-    }
-}
-
+.edit-btn:hover { background: #f0fffe; transform: translateY(-2px); }
 
 .delete-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 6px;
-    border-radius: 8px;
-    transition: background 0.15s ease, transform 0.12s ease;
+  background: #ffebed;
+  color: #a71d2a;
+  border: 1px solid rgba(167,29,42,0.12);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
 }
+.delete-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(167,29,42,0.06); }
 
-.delete-btn:hover {
-    background: rgba(255,0,0,0.08);
-    transform: translateY(-2px);
-}
+/* Empty text */
+.empty { color:#777; font-style: italic; padding: 10px 0; }
 
-.delete-btn:active {
-    transform: translateY(0);
-}
+/* Flash messages */
+.flash-container { margin: 10px 0; }
+.flash { padding:8px 12px; border-radius:8px; margin-bottom:8px; font-weight:600; }
+.flash.success { background:#e7fff0; color:#0b7d4f; border:1px solid #c9f5db; }
+.flash.warning { background:#fff6e6; color:#8a5f00; border:1px solid #ffe0b8; }
+.flash.error { background:#ffecec; color:#7a1717; border:1px solid #ffc9c9; }
 
-
-select {
-    padding: 5px 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-left: 8px;
-}
-
-.category-label {
-    color: #555;
-    font-size: 0.9em;
-    margin-left: 8px;
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .add-form { flex-direction: column; align-items: stretch; }
+  .actions { gap:6px; }
 }

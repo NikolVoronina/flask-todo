@@ -1,90 +1,145 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="no">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>To-Do appen</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>To-Do Liste</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>To-Do List</h1>
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <h1>To-Do Liste</h1>
+        <p class="subtitle">Hold orden på oppgavene dine</p>
+      </div>
 
-        <!-- Flash-meldinger -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="flash-container">
-              {% for category, msg in messages %}
-                <div class="flash {{ category }}">{{ msg }}</div>
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
+      <!-- Skjema for å legge til oppgaver -->
+      <form action="{{ url_for('add_task') }}" method="POST" class="add-form">
+        <input type="text" name="task" placeholder="Skriv inn en ny oppgave..." required maxlength="255">
+        <select name="category">
+          <option value="">Kategori</option>
+          {% for c in categories %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+        <button class="primary" type="submit">Legg til</button>
+      </form>
+    </header>
 
-        <!-- Add form -->
-        <form action="{{ url_for('add_task') }}" method="POST" class="add-form">
-            <input type="text" name="task" placeholder="Skriv din oppgave" required maxlength="255">
-            <select name="category">
-                <option value="">Ketegori</option>
-                <option value="Work">Work</option>
-                <option value="Study">Study</option>
-                <option value="Personal">Personal</option>
-                <option value="Other">Other</option>
-            </select>
-            <button type="submit">➕</button>
-        </form>
+    <!-- Flash-meldinger -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
-        <!-- Filter -->
-        <form action="{{ url_for('index') }}" method="GET" style="margin-top:10px;">
-            <label for="category_filter">Filer :</label>
-            <select name="category" id="category_filter" onchange="this.form.submit()">
-                <option value="">Vis alle </option>
-                <option value="Work" {% if selected_category == 'Work' %}selected{% endif %}>Work</option>
-                <option value="Study" {% if selected_category == 'Study' %}selected{% endif %}>Study</option>
-                <option value="Personal" {% if selected_category == 'Personal' %}selected{% endif %}>Personal</option>
-                <option value="Other" {% if selected_category == 'Other' %}selected{% endif %}>Other</option>
-            </select>
-        </form>
+    <!-- Filter (valgfritt) -->
+    <nav class="filter-row">
+      <form action="{{ url_for('index') }}" method="GET" class="filter-form">
+        <label for="category_filter">Vis kategori:</label>
+        <select name="category" id="category_filter" onchange="this.form.submit()">
+          <option value="">Alle</option>
+          {% for c in categories %}
+            <option value="{{ c }}" {% if selected_category == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </nav>
 
-        <!-- Tasks list -->
-        <ul>
-            {% for task in tasks %}
-            <li>
-                <!-- toggle -->
+    <!-- Grid med kolonner per kategori -->
+    <div class="categories-grid">
+      <!-- Kolonne: Alle oppgaver -->
+      <section class="category-col">
+        <h2>Alle</h2>
+        <div class="cards">
+          {% for task in tasks %}
+            <article class="task-card {% if task.completed %}done{% endif %}">
+              <div class="task-left">
                 <form action="{{ url_for('toggle_task', task_id=task.id) }}" method="POST" style="display:inline;">
-                    <input type="checkbox" name="completed" onchange="this.form.submit()" {% if task.completed %}checked{% endif %}>
+                  <input type="checkbox" name="completed" onchange="this.form.submit()" {% if task.completed %}checked{% endif %}>
                 </form>
 
-                <!-- text -->
-                <span {% if task.completed %}style="text-decoration: line-through; color: gray;"{% endif %}>
-                    {{ task.text }}
-                </span>
-
-                <!-- category badge -->
-                {% if task.category %}
-                    <span class="category-badge">{{ task.category }}</span>
-                {% endif %}
-
-                <!-- created at -->
-                {% if task.created_at %}
-                    <small class="task-meta"> — {{ task.created_at }}</small>
-                {% endif %}
-
-                <!-- actions -->
-                <div class="actions" style="display:inline-block; margin-left:12px;">
-                    <a class="edit-btn" href="{{ url_for('edit_task', task_id=task.id) }}" title="Редактировать">✏️</a>
-
-                    <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Удалить задачу?');">
-                        <button class="delete-btn" type="submit" title="Удалить">🗑️</button>
-                    </form>
+                <div class="task-text">
+                  <div class="title">{{ task.text }}</div>
+                  {% if task.created_at %}
+                    <div class="meta">Lagt til: {{ task.created_at }}</div>
+                  {% endif %}
                 </div>
-            </li>
-            {% endfor %}
-        </ul>
+              </div>
 
-        {% if not tasks %}
-            <p class="empty">Skriv di firste oppgaven ;3 </p>
-        {% endif %}
+              <div class="task-right">
+                {% if task.category %}
+                  <span class="category-badge">{{ task.category }}</span>
+                {% endif %}
+                <div class="actions">
+                  <a class="edit-btn" href="{{ url_for('edit_task', task_id=task.id) }}">Rediger</a>
+                  <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" onsubmit="return confirm('Slett oppgaven?');" style="display:inline;">
+                    <button class="delete-btn" type="submit">Slett</button>
+                  </form>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+
+          {% if not tasks %}
+            <p class="empty">Ingen oppgaver ennå — legg til din første!</p>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- Separate kolonner for hver kategori -->
+      {% for cat in categories %}
+      <section class="category-col">
+        <h2>{{ cat }}</h2>
+        <div class="cards">
+          {% set has_any = false %}
+          {% for task in tasks %}
+            {% if task.category == cat %}
+              {% set has_any = true %}
+              <article class="task-card {% if task.completed %}done{% endif %}">
+                <div class="task-left">
+                  <form action="{{ url_for('toggle_task', task_id=task.id) }}" method="POST" style="display:inline;">
+                    <input type="checkbox" name="completed" onchange="this.form.submit()" {% if task.completed %}checked{% endif %}>
+                  </form>
+
+                  <div class="task-text">
+                    <div class="title">{{ task.text }}</div>
+                    {% if task.created_at %}
+                      <div class="meta">Lagt til: {{ task.created_at }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="task-right">
+                  <span class="category-badge">{{ task.category }}</span>
+                  <div class="actions">
+                    <a class="edit-btn" href="{{ url_for('edit_task', task_id=task.id) }}">Rediger</a>
+                    <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" onsubmit="return confirm('Slett oppgaven?');" style="display:inline;">
+                      <button class="delete-btn" type="submit">Slett</button>
+                    </form>
+                  </div>
+                </div>
+              </article>
+            {% endif %}
+          {% endfor %}
+
+          {% if not has_any %}
+            <p class="empty">Ingen oppgaver i denne kategorien.</p>
+          {% endif %}
+        </div>
+      </section>
+      {% endfor %}
     </div>
+
+  </div>
 </body>
 </html>

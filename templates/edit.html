@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="no">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Редактировать задачу</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rediger oppgave</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <div class="container">
-    <h1>Redigere oppgaven</h1>
+    <h1>Rediger oppgave</h1>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -21,10 +25,15 @@
     {% endwith %}
 
     <form action="{{ url_for('edit_task', task_id=task.id) }}" method="POST" class="edit-form">
-      <input type="text" name="task" value="{{ task.task }}" required maxlength="255" />
+      <label for="task_input">Oppgave</label>
+      <input id="task_input" type="text" name="task" value="{{ task.text }}" required maxlength="255" />
+
+      <label for="category_input">Kategori</label>
+      <input id="category_input" type="text" name="category" value="{{ task.category or '' }}" maxlength="100" placeholder="Eks: Work / Study / Personal" />
+
       <div style="margin-top:12px;">
-        <button type="submit">💾</button>
-        <a class="cancel-btn" href="{{ url_for('index') }}">Cancel</a>
+        <button type="submit" class="primary">Lagre</button>
+        <a class="cancel-btn" href="{{ url_for('index') }}">Avbryt</a>
       </div>
     </form>
   </div>
