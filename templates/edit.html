@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rediger oppgave</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Rediger oppgave</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+   <form action="{{ url_for('add_task') }}" method="POST" class="add-form">
+    <input type="text" name="task" placeholder="Enter a new task" required maxlength="255" />
+    <select name="category">
+        <option value="">-- Kategori --</option>
+        <option value="Personal">Personal</option>
+        <option value="Work">Work</option>
+        <option value="Study">Study</option>
+        <option value="Other">Other</option>
+    </select>
+    <button type="submit">➕ Add</button>
+</form>
+
+<!-- Filter form (GET) -->
+<form action="{{ url_for('index') }}" method="GET" class="filter-form" style="margin-top:10px;">
+    <label for="filter_cat">Filtrer etter kategori:</label>
+    <select id="filter_cat" name="category" onchange="this.form.submit()">
+        <option value="">Vis alle</option>
+        <option value="Personal" {% if request.args.get('category') == 'Personal' %}selected{% endif %}>Personal</option>
+        <option value="Work" {% if request.args.get('category') == 'Work' %}selected{% endif %}>Work</option>
+        <option value="Study" {% if request.args.get('category') == 'Study' %}selected{% endif %}>Study</option>
+        <option value="Other" {% if request.args.get('category') == 'Other' %}selected{% endif %}>Other</option>
+    </select>
+</form>
+
+  </div>
+</body>
+</html>

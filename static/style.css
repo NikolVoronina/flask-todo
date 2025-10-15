@@ -1,1 +1,138 @@
-/* Her kan du putte CSS :/ */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #e0f7fa, #b2ebf2);
+    margin: 0;
+    padding: 0;
+}
+
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #00796b;
+    margin-bottom: 25px;
+    font-size: 2rem;
+}
+
+
+form {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 15px;
+    border: 1px solid #00796b;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #004d40;
+    box-shadow: 0 0 8px rgba(0,77,64,0.5);
+}
+
+button {
+    padding: 12px 20px;
+    margin-left: 10px;
+    background-color: #00796b;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #004d40;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #b2dfdb;
+    margin-bottom: 12px;
+    padding: 15px 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s;
+}
+
+li:hover {
+    background-color: #80cbc4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Сообщение при пустом списке */
+p {
+    text-align: center;
+    color: #555;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .container {
+        margin: 30px 15px;
+        padding: 20px;
+    }
+
+    form {
+        flex-direction: column;
+    }
+
+    input[type="text"] {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    button {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 6px;
+    border-radius: 8px;
+    transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.delete-btn:hover {
+    background: rgba(255,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+.delete-btn:active {
+    transform: translateY(0);
+}

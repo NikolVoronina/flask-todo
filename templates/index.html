@@ -1,29 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>To-Do List</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
     <div class="container">
         <h1>To-Do List</h1>
 
-        <form action="/add" method="POST">
-            <input type="text" name="task" placeholder="Enter a new task" required>
-            <button type="submit">Add</button>
+        <!-- Flash-meldinger -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-container">
+              {% for category, msg in messages %}
+                <div class="flash {{ category }}">{{ msg }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Legg til oppgave: client-side validering (required, maxlength) -->
+        <form action="{{ url_for('add_task') }}" method="POST" class="add-form">
+            <input type="text" name="task" placeholder="Enter a new task" required maxlength="255" />
+            <button type="submit">➕ Add</button>
         </form>
-        
+
+        <!-- Liste med oppgaver -->
         <ul>
-            <!-- Forklar hva denne løkken ⬇ gjør. Og hvor kommer tasks fra? -->
-            {% for task in tasks %} 
-            <li>{{ task[1] }} </li> 
-            {% endfor %}
-        </ul>
+    {% for task in tasks %}
+    <li>
+        <form action="/toggle/{{ task[0] }}" method="POST" style="display:inline;">
+            <input type="checkbox" name="completed" onchange="this.form.submit()" {% if task[2] %}checked{% endif %}>
+        </form>
+
+        <span {% if task[2] %}style="text-decoration: line-through; color: gray;"{% endif %}>
+            {{ task[1] }}
+        </span>
+
+        <!-- Delete button -->
+        <form action="/delete/{{ task[0] }}" method="POST" style="display:inline;margin-left:12px;" onsubmit="return confirm('Er du sikker på at du vil slette oppgaven?');">
+            <button class="delete-btn" type="submit" title="Slett oppgave">🗑️</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+{% if not tasks %}
+    <p>Ingen oppgaver ennå!</p>
+{% endif %}
+
+
+        {% if not tasks %}
+            <p class="empty">Ingen oppgaver ennå! Legg til din første oppgave ✨</p>
+        {% endif %}
     </div>
 </body>
-
 </html>
