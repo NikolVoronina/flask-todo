@@ -136,3 +136,17 @@ p {
 .delete-btn:active {
     transform: translateY(0);
 }
+
+
+select {
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-left: 8px;
+}
+
+.category-label {
+    color: #555;
+    font-size: 0.9em;
+    margin-left: 8px;
+}

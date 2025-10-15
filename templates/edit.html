@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rediger oppgave</title>
+  <title>Редактировать задачу</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <div class="container">
-    <h1>Rediger oppgave</h1>
+    <h1>Redigere oppgaven</h1>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -20,30 +20,13 @@
       {% endif %}
     {% endwith %}
 
-   <form action="{{ url_for('add_task') }}" method="POST" class="add-form">
-    <input type="text" name="task" placeholder="Enter a new task" required maxlength="255" />
-    <select name="category">
-        <option value="">-- Kategori --</option>
-        <option value="Personal">Personal</option>
-        <option value="Work">Work</option>
-        <option value="Study">Study</option>
-        <option value="Other">Other</option>
-    </select>
-    <button type="submit">➕ Add</button>
-</form>
-
-<!-- Filter form (GET) -->
-<form action="{{ url_for('index') }}" method="GET" class="filter-form" style="margin-top:10px;">
-    <label for="filter_cat">Filtrer etter kategori:</label>
-    <select id="filter_cat" name="category" onchange="this.form.submit()">
-        <option value="">Vis alle</option>
-        <option value="Personal" {% if request.args.get('category') == 'Personal' %}selected{% endif %}>Personal</option>
-        <option value="Work" {% if request.args.get('category') == 'Work' %}selected{% endif %}>Work</option>
-        <option value="Study" {% if request.args.get('category') == 'Study' %}selected{% endif %}>Study</option>
-        <option value="Other" {% if request.args.get('category') == 'Other' %}selected{% endif %}>Other</option>
-    </select>
-</form>
-
+    <form action="{{ url_for('edit_task', task_id=task.id) }}" method="POST" class="edit-form">
+      <input type="text" name="task" value="{{ task.task }}" required maxlength="255" />
+      <div style="margin-top:12px;">
+        <button type="submit">💾</button>
+        <a class="cancel-btn" href="{{ url_for('index') }}">Cancel</a>
+      </div>
+    </form>
   </div>
 </body>
 </html>
